@@ -66,7 +66,8 @@
 # * Contact package maintainers
 # * Announce the release (example: https://blog.torproject.org/blog/stem-release-11)
 
-import distutils.core
+# import distutils.core
+import setuptools
 import os
 import sys
 import stem
@@ -131,7 +132,7 @@ with open('MANIFEST.in', 'w') as manifest_file:
   manifest_file.write(MANIFEST)
 
 try:
-  distutils.core.setup(
+  setuptools.setup(
     name = 'stem-dry-run' if DRY_RUN else 'stem',
     version = stem.__version__,
     description = DRY_RUN_SUMMARY if DRY_RUN else SUMMARY,

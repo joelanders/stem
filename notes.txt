@@ -1,0 +1,13 @@
+* signature is preceded by a space or is that a mistake?
+* cert has (according to the spec)
+    * certified key - short-term desc-signing key
+    * signing key extension - blinded public key
+    * signature - the above signed by the blinded public key
+
+
+* i think tomorrow i need to modify tor's sig-checking code and stem's so that they
+  both print out all the intermediate states
+
+* looks like tor is signing the whole descriptor content -- not a hash thereof
+
+* cia's revision-number was ~2 billion yesterday and ~4 billion today

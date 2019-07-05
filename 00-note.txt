@@ -1,0 +1,1 @@
+desc = list(stem.descriptor.hsv3_descriptor._parse_file(open('cia-hsdesc.txt', 'rb'), validate=True, onion_address="ciadotgov4sjwlzihbbgxnqg3xiyrg7so2r2o3lt5wz5ypk4sxyjstad"))[0]

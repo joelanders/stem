@@ -1,0 +1,68 @@
+create2-formats 2
+introduction-point AwAGvgKRByMpAhR8IuiatiDnffG0ozeHpew/KrSo0QMgiXu+Ul+/XweGZYiSpOsOek2O0acGLJgS+4bw/EmiQq8=
+onion-key ntor eTxr/iQOJlUBoos26YKOQnZgXIOUESfxl3IecdXWgV8=
+auth-key
+-----BEGIN ED25519 CERT-----
+AQkABp2EAfrl9aBRt1MBmTSAxWdYhuiCZ6cKLtzNpLEU2uAH78xLAQAgBAAzY5PO
+q2juOiUxTSUcJsLkm7msEumNjoTuLXYZFLVBdvv7aJf8ut3/n7s476oaoCTk1j3P
+iCa9i7nQYrUj3wn6iAIUhC+3C4sg6fs4dUA0wxya5lXuVL/5uy53X4alkw8=
+-----END ED25519 CERT-----
+enc-key ntor OHr+COyT6tMC5jiAP3yUS5gXbZbpJonlL7RYLHzhPFE=
+enc-key-cert
+-----BEGIN ED25519 CERT-----
+AQsABp2EAcLHDt9VtZ2K0r2zY6kPLfLeicMbFqL+cnCodsyjEQhbAQAgBAAzY5PO
+q2juOiUxTSUcJsLkm7msEumNjoTuLXYZFLVBdl+8HLTpwlLYG7/iveYK8JraF9cs
+A8xDUODG6YaFWvP6a64ZBMO32KnGyzoVRdcQnsK5hWSAxFf1uXekpvjZbQo=
+-----END ED25519 CERT-----
+
+
+
+
+introduction-point AwAGJbtosiMpAhTOsgTkWlbRGw29GnglkvFYCSIHGwMg4Hlg+U9G5yAj+NBGW0pYRxbN1AVtophysMJkiQLkpR8=
+onion-key ntor TRtSiKfTOxZ1zgjW0GXIo3nGLDS/Uq6HTB/VzzxR6CQ=
+auth-key
+-----BEGIN ED25519 CERT-----
+AQkABp2EAeraf0xZFx4z3vmXq9nBvCFykeNcWrI+DwpbJ31iLvwWAQAgBAAzY5PO
+q2juOiUxTSUcJsLkm7msEumNjoTuLXYZFLVBdjhVM8+8W3BLmu+bZy2wrKaSCEUR
+sTM/a3I/SvEKZym3a6CWI4IP64wDkYqqxzGi6vIafocLR6LqyqEfVPNb/wY=
+-----END ED25519 CERT-----
+enc-key ntor WkNRB362HIV8GoEgc4AqodbHACjPhmLXywokLV6Dgxc=
+enc-key-cert
+-----BEGIN ED25519 CERT-----
+AQsABp2EAXcR8WjHiHxpDPf9a4h5zP1iYL9Lbos3z8r+X2Ckbz4xAQAgBAAzY5PO
+q2juOiUxTSUcJsLkm7msEumNjoTuLXYZFLVBdtV9n9opA01Z6+HE2MIYqt4DeoG5
+Zq2T7gFourEp895PBvzSrjbsqw0FSOOVPkYUdaDlvPxlJImGSzuAC0kqlwg=
+-----END ED25519 CERT-----
+
+
+
+
+introduction-point AgAGlcq+DiMpAhQfQQXGiOg1pWrz1mx4dne1ckD/og==
+onion-key ntor i2mJHnMCGUXA1iDy0T2QgxzSukdIXOOsBg7N1QlRnGg=
+auth-key
+-----BEGIN ED25519 CERT-----
+AQkABp2EAUXB6Z9VY1EcwwWRmr82if6flwzHt63xtDpXcgUKxgx3AQAgBAAzY5PO
+q2juOiUxTSUcJsLkm7msEumNjoTuLXYZFLVBdpWBY6BqzWOh3j07Rzl6YmWr5oH3
+x7fOdJHkX5lZZqniYZIpQ7GeFRD066NFjdQmIi/efotc5HK+wxaGG+5O/wk=
+-----END ED25519 CERT-----
+enc-key ntor Y34Lb21l1nWSVyOqiSSn9rsQP0yKxiuoa4uQ40T8STY=
+enc-key-cert
+-----BEGIN ED25519 CERT-----
+AQsABp2EAcr7WH5gA9YnVNFunjX8JSh7r6dVoc2FW1XK/zyxKpoYAQAgBAAzY5PO
+q2juOiUxTSUcJsLkm7msEumNjoTuLXYZFLVBdldJOqbir9rEhmWxwyBXRO1XF/f4
+UD/EvJOms+Pf7fUMUqR0/8XBLmTK4v7Br8gTkn+AB4oAMzUAF1UC7hrNYgg=
+-----END ED25519 CERT-----
+legacy-key
+-----BEGIN RSA PUBLIC KEY-----
+MIGJAoGBAJ5w+6gZJmXFzm9fLTt8hIVlNkIsBdkD57+Edhuv9j0TGtBSrHI3S60P
+DRc7aZqkwvk4myoJQBIf1perGieZH3Jn2JXMvHyDzFL6r3W/2g1tDaOdHB+szys+
+gwBrFbGiOiJ0XEgaSzVE+arhj+XV8rjDO1TfvIPE90ouKIXHhAgfAgMBAAE=
+-----END RSA PUBLIC KEY-----
+legacy-key-cert
+-----BEGIN CROSSCERT-----
+M2OTzqto7jolMU0lHCbC5Ju5rBLpjY6E7i12GRS1QXYABp2EgH3ZzYvyGqbge/nF
+IyGcNLdJiZPAuC7YXnKF/S4u61gPc1FXUrJ8gjk8lw4GJkpmjUleqbcXisCSyAC2
+Zu/vBytrD180DXRmlOEeiONgpqwCq6Z8Es1xtBF6pVgkZwvK8e3MipQTtrDAXPlU
+iOgiXmIIHTpk9aUTu7DWhNzjI5yd
+-----END CROSSCERT-----
+

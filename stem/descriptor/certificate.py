@@ -32,6 +32,7 @@ used to validate the key used to sign server descriptors.
   **SIGNING**     signing a signing key with an identity key
   **LINK_CERT**   TLS link certificate signed with ed25519 signing key
   **AUTH**        authentication key signed with ed25519 signing key
+  XXX update with hsv3 stuff
   ==============  ===========
 
 .. data:: ExtensionType (enum)
@@ -69,8 +70,9 @@ import stem.util.str_tools
 ED25519_HEADER_LENGTH = 40
 ED25519_SIGNATURE_LENGTH = 64
 ED25519_ROUTER_SIGNATURE_PREFIX = b'Tor router descriptor signature v1'
+ED25519_HSV3_DESCRIPTOR_PREFIX = b'Tor onion service descriptor sig v3'
 
-CertType = stem.util.enum.UppercaseEnum('SIGNING', 'LINK_CERT', 'AUTH')
+CertType = stem.util.enum.UppercaseEnum('SIGNING', 'LINK_CERT', 'AUTH', 'DESC_SIGNING', 'IP_AUTH', 'IP_ENC')
 ExtensionType = stem.util.enum.Enum(('HAS_SIGNING_KEY', 4),)
 ExtensionFlag = stem.util.enum.UppercaseEnum('AFFECTS_VALIDATION', 'UNKNOWN')
 
@@ -158,6 +160,12 @@ class Ed25519CertificateV1(Ed25519Certificate):
       self.type = CertType.AUTH
     elif cert_type == 7:
       raise ValueError('Ed25519 certificate cannot have a type of 7. This is reserved for RSA identity cross-certification.')
+    elif cert_type == 8:
+      self.type = CertType.DESC_SIGNING  # short-term desc signing key
+    elif cert_type == 9:
+      self.type = CertType.IP_AUTH  # intro-point auth key
+    elif cert_type == 0xb:  # XXX spec uses hex
+      self.type = CertType.IP_ENC   # [0B] ed25519 key derived from the curve25519 intro point encryption key,
     else:
       raise ValueError("BUG: Ed25519 certificate type is decoded from one byte. It shouldn't be possible to have a value of %i." % cert_type)
 
@@ -237,8 +245,15 @@ class Ed25519CertificateV1(Ed25519Certificate):
     descriptor_content = server_descriptor.get_bytes()
     signing_key = None
 
-    if server_descriptor.ed25519_master_key:
+    print(f"### certificate: {server_descriptor.certificate}")
+    print(f"### certificate.key: {server_descriptor.certificate.key}")
+    print(f"### extensions: {server_descriptor.certificate.extensions}")
+    if hasattr(server_descriptor, "ed25519_master_key") and server_descriptor.ed25519_master_key:
       signing_key = Ed25519PublicKey.from_public_bytes(base64.b64decode(stem.util.str_tools._to_bytes(server_descriptor.ed25519_master_key) + b'='))
+    elif server_descriptor.certificate:
+      # XXX hacky
+      signing_key = Ed25519PublicKey.from_public_bytes(self.extensions[0].data)
+      print(f"### certificate.key: {signing_key}")
     else:
       for extension in self.extensions:
         if extension.type == ExtensionType.HAS_SIGNING_KEY:
@@ -249,23 +264,58 @@ class Ed25519CertificateV1(Ed25519Certificate):
       raise ValueError('Server descriptor missing an ed25519 signing key')
 
     try:
-      signing_key.verify(self.signature, base64.b64decode(stem.util.str_tools._to_bytes(self.encoded))[:-ED25519_SIGNATURE_LENGTH])
+      print(f"### encoded: {self.encoded}")
+      signed_bytes = base64.b64decode(stem.util.str_tools._to_bytes(self.encoded))[:-ED25519_SIGNATURE_LENGTH]
+      print(f"### len(signed_bytes) = {len(signed_bytes)}")
+      print(f"### signed_bytes[0] = {hex(signed_bytes[0])}")
+      print(f"### signed_bytes[-1] = {hex(signed_bytes[-1])}")
+      signing_key.verify(self.signature, signed_bytes)
     except InvalidSignature:
       raise ValueError('Ed25519KeyCertificate signing key is invalid (Signature was forged or corrupt)')
 
     # ed25519 signature validates descriptor content up until the signature itself
 
-    if b'router-sig-ed25519 ' not in descriptor_content:
-      raise ValueError("Descriptor doesn't have a router-sig-ed25519 entry.")
+    # XXX this is hacky. basically, i needed to add the "else" case for Hsv3Descriptors
+    if type(server_descriptor).__name__ == "ServerDescriptor":
+      if b'router-sig-ed25519 ' not in descriptor_content:
+        raise ValueError("Descriptor doesn't have a router-sig-ed25519 entry.")
 
-    signed_content = descriptor_content[:descriptor_content.index(b'router-sig-ed25519 ') + 19]
-    descriptor_sha256_digest = hashlib.sha256(ED25519_ROUTER_SIGNATURE_PREFIX + signed_content).digest()
+      signed_content = descriptor_content[:descriptor_content.index(b'router-sig-ed25519 ') + 19]
+      descriptor_sha256_digest = hashlib.sha256(ED25519_ROUTER_SIGNATURE_PREFIX + signed_content).digest()
 
-    missing_padding = len(server_descriptor.ed25519_signature) % 4
-    signature_bytes = base64.b64decode(stem.util.str_tools._to_bytes(server_descriptor.ed25519_signature) + b'=' * missing_padding)
+      missing_padding = len(server_descriptor.ed25519_signature) % 4
+      signature_bytes = base64.b64decode(stem.util.str_tools._to_bytes(server_descriptor.ed25519_signature) + b'=' * missing_padding)
 
-    try:
-      verify_key = Ed25519PublicKey.from_public_bytes(self.key)
-      verify_key.verify(signature_bytes, descriptor_sha256_digest)
-    except InvalidSignature:
-      raise ValueError('Descriptor Ed25519 certificate signature invalid (Signature was forged or corrupt)')
+      try:
+        verify_key = Ed25519PublicKey.from_public_bytes(self.key)
+        verify_key.verify(signature_bytes, descriptor_sha256_digest)
+      except InvalidSignature:
+        raise ValueError('Descriptor Ed25519 certificate signature invalid (Signature was forged or corrupt)')
+    else:
+      if b'signature' not in descriptor_content:
+        raise ValueError("Descriptor doesn't have a signature entry")
+
+      signed_content = ED25519_HSV3_DESCRIPTOR_PREFIX + descriptor_content[:descriptor_content.index(b'signature ')]
+      print(f"### signed_content: {signed_content}")
+      print(f"### len(signed_content) = {len(signed_content)}")
+      print(f"### signed_content[0] = {hex(signed_content[0])}")
+      print(f"### signed_content[-1] = {hex(signed_content[-1])}")
+      descriptor_sha256_digest = hashlib.sha256(signed_content).digest()
+      print(f"### sha256(descriptor): {descriptor_sha256_digest}")
+
+      missing_padding = len(server_descriptor.signature) % 4
+      signature_bytes = base64.b64decode(stem.util.str_tools._to_bytes(server_descriptor.signature) + b'=' * missing_padding)
+      try:
+        # key_bytes = self.extensions[0].data
+        key_bytes = self.key
+        print(f"### signature_bytes: {signature_bytes}")
+        print(f"### len(signature_bytes): {len(signature_bytes)}")
+        print(f"### key_bytes: {key_bytes}")
+        print(f"### len(key_bytes): {len(key_bytes)}")
+        verify_key = Ed25519PublicKey.from_public_bytes(key_bytes)
+        print(f"### verify_key: {verify_key}")
+        # XXX !!! looks like tor is signing the whole content and not a hash digest
+        #verify_key.verify(signature_bytes, descriptor_sha256_digest)
+        verify_key.verify(signature_bytes, signed_content)
+      except InvalidSignature:
+        raise ValueError('Descriptor Ed25519 certificate signature invalid (Signature was forged or corrupt)')

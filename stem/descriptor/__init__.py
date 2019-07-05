@@ -116,6 +116,7 @@ __all__ = [
   'export',
   'extrainfo_descriptor',
   'hidden_service_descriptor',
+  'hsv3_descriptor',
   'microdescriptor',
   'networkstatus',
   'reader',
